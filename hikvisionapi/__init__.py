@@ -1,4 +1,4 @@
-from hikvisionapi import Client
+from .hikvisionapi import Client
 
 __title__ = 'hikvisionapi'
 __version__ = '0.1.2'
