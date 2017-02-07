@@ -11,7 +11,7 @@ Examples
 
 .. code:: python
 
-    from hikvision import client
+    from hikvision import Client
 
     api = Client('http://192.168.0.2', 'admin', 'admin')
     response = api.System.deviceInfo(method='get', json=True)
@@ -24,7 +24,7 @@ Examples
         "deviceName": "HIKVISION"
     }
 
-You can get responseras text:
+You can get response as text:
 
 .. code:: python
 
