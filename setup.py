@@ -13,6 +13,7 @@ setup(name='hikvisionapi',
       author='Petr Alekseev',
       author_email='petrmissial@gmail.com',
       packages=find_packages(),
-      long_description=open(join(dirname(__file__), 'README.md')).read(),
-      zip_safe=False)
-
+      long_description=open(join(dirname(__file__), 'README.rst')).read(),
+      download_url='https://github.com/MissiaL/hikvision-client/tarball/{}'.format(version),
+      keywords=['api', 'hikvision', 'hikvision-client']
+      )
