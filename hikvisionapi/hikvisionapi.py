@@ -120,8 +120,3 @@ class Client:
         if need_json:
             return response_xml_parser(response)
         return response.text
-
-if __name__ == '__main__':
-    api = Client('http://172.17.11.112', 'admin', 'Password')
-    response = api.System.deviceInfo(method='get', json=False)
-    print (response)
