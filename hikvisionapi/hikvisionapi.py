@@ -22,7 +22,7 @@ class DynamicMethod(object):
         self.method_name = method_name
 
     def __getattr__(self, key):
-        return DynamicMethod(self.client, '/'.join((self.method_name, key)))
+        return DynamicMethod(self.client, '/'.join((self.method_name, key.replace('_', ''))))
 
     def __call__(self, **kwargs):
         assert 'method' in kwargs, "set http method in args"
