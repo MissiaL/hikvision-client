@@ -6,6 +6,14 @@ companies Hikvision
 
 --------------
 
+Install
+-------
+
+.. code:: bash
+
+    pip install hikvisionapi
+
+
 Examples
 --------
 
@@ -36,6 +44,23 @@ You can get response as text:
     <DeviceInfo version="1.0" xmlns="http://www.hikvision.com/ver20/XMLSchema">
     <deviceName>HIKVISION</deviceName>
     </DeviceInfo>'
+
+===========
+<ID> prefix
+===========
+
+For the numbering of channels using a prefix starting with **_**
+
+.. code:: python
+
+    api.System.Video.inputs.channels._1.motionDetection(method='get')
+
+url path:
+
+.. code:: text
+
+    'System/Video/inputs/channels/1/motionDetection'
+
 
 More examples:
 
