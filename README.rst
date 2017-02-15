@@ -49,11 +49,11 @@ You can get response as text:
 <ID> prefix
 ===========
 
-For the numbering of channels using a prefix starting with **_**
+For the numbering of channels using at:
 
 .. code:: python
 
-    api.System.Video.inputs.channels._1.motionDetection(method='get')
+    api.System.Video.inputs.channels[1].motionDetection(method='get')
 
 url path:
 
