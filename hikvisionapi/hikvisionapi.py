@@ -20,9 +20,13 @@ class DynamicMethod(object):
     def __init__(self, client, method_name):
         self.client = client
         self.method_name = method_name
+        self.path = []
 
     def __getattr__(self, key):
-        return DynamicMethod(self.client, '/'.join((self.method_name, key.replace('_', ''))))
+        return DynamicMethod(self.client, '/'.join((self.method_name, key)))
+
+    def __getitem__(self, item):
+        return DynamicMethod(self.client, self.method_name + "/" + str(item))
 
     def __call__(self, **kwargs):
         assert 'method' in kwargs, "set http method in args"
@@ -120,3 +124,4 @@ class Client:
         if need_json:
             return response_xml_parser(response)
         return response.text
+
