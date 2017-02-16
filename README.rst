@@ -22,7 +22,7 @@ Examples
     from hikvision import Client
 
     api = Client('http://192.168.0.2', 'admin', 'admin')
-    response = api.System.deviceInfo(method='get', json=True)
+    response = api.System.deviceInfo(method='get', present='json')
 
 .. code:: json
 
@@ -36,7 +36,7 @@ You can get response as text:
 
 .. code:: python
 
-    response = api.System.deviceInfo(method='get', json=False)
+    response = api.System.deviceInfo(method='get', present='text')
 
 .. code:: text
 
@@ -44,6 +44,17 @@ You can get response as text:
     <DeviceInfo version="1.0" xmlns="http://www.hikvision.com/ver20/XMLSchema">
     <deviceName>HIKVISION</deviceName>
     </DeviceInfo>'
+
+By default response as dict:
+
+.. code:: python
+
+    response = api.System.deviceInfo(method='get')
+
+.. code:: python
+
+    response = {'DeviceInfo': {'deviceName': 'HIKVISION'}}
+
 
 ===========
 <ID> prefix
@@ -66,5 +77,5 @@ More examples:
 
 .. code:: python
 
-    xml = api.System.deviceInfo(method='get', json=False)
-    api.System.deviceInfo(method='put', data=xml, json=False)
+    xml = api.System.deviceInfo(method='get', present='text')
+    api.System.deviceInfo(method='put', data=xml)
