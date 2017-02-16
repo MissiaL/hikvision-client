@@ -3,6 +3,7 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import xmltodict
+
 try:
     from urllib.parse import urljoin
 except ImportError:
@@ -33,16 +34,23 @@ class DynamicMethod(object):
         return self.client.request(self.method_name, **kwargs)
 
 
-def response_xml_parser(response):
-    """ Convert Hikvision XML to JSON
+def response_parser(response, present='dict'):
+    """ Convert Hikvision results
     """
     xml = response.text
     try:
-        js = json.dumps(xmltodict.parse(xml))
+        if present in ('json', 'js'):
+            result = json.dumps(xmltodict.parse(xml))
+        elif present == 'text':
+            result = xml
+        elif present == 'dict':
+            result = json.loads(json.dumps(xmltodict.parse(xml)))
+        else:
+            raise Exception('Not supported format')
     except:
-        msg = 'Failed {} convert to json'.format(xml)
+        msg = 'Failed {} convert to {}'.format(xml, present)
         raise ConvertToJsonError(msg)
-    return js
+    return result
 
 
 class Client:
@@ -54,7 +62,7 @@ class Client:
 
     from hikvisionapi import Client
     api = Client('http://192.168.0.2', 'admin', 'admin')
-    response = api.System.deviceInfo(method='get', json=True)
+    response = api.System.deviceInfo(method='get', present='json')
 
     Response as json
 
@@ -68,7 +76,7 @@ class Client:
 
     or as text
 
-    response = api.System.deviceInfo(method='get', json=False)
+    response = api.System.deviceInfo(method='get', present='text)
 
     <?xml version="1.0" encoding="UTF-8" ?>
         <DeviceInfo version="1.0" xmlns="http://www.hikvision.com/ver20/XMLSchema">
@@ -111,7 +119,7 @@ class Client:
         method = kwargs['method']
 
         data = kwargs
-        data.pop('json', None)
+        data.pop('present', None)
         data.pop('method')
         response = self.req.request(method, full_url, timeout=self.timeout, **data)
         response.raise_for_status()
@@ -119,9 +127,5 @@ class Client:
 
     def request(self, *args, **kwargs):
         response = self._prepared_request(*args, **kwargs)
-        need_json = True if 'json' not in kwargs else kwargs.get('json')
-
-        if need_json:
-            return response_xml_parser(response)
-        return response.text
-
+        present = kwargs.get('present', 'dict')
+        return response_parser(response, present)
