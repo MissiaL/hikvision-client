@@ -37,20 +37,21 @@ class DynamicMethod(object):
 def response_parser(response, present='dict'):
     """ Convert Hikvision results
     """
-    xml = response.text
-    try:
-        if present in ('json', 'js'):
-            result = json.dumps(xmltodict.parse(xml))
-        elif present == 'text':
-            result = xml
-        elif present == 'dict':
-            result = json.loads(json.dumps(xmltodict.parse(xml)))
-        else:
-            raise Exception('Not supported format')
-    except:
-        msg = 'Failed {} convert to {}'.format(xml, present)
-        raise ConvertToJsonError(msg)
-    return result
+    if isinstance(response, (list,)):
+        result = "".join(response)
+    else:
+        result = response.text
+
+    if present == 'dict':
+        if isinstance(response, (list,)):
+            events = []
+            for event in response:
+                e = json.loads(json.dumps(xmltodict.parse(event)))
+                events.append(e)
+            return events
+        return json.loads(json.dumps(xmltodict.parse(result)))
+    else:
+        return result
 
 
 class Client:
@@ -96,6 +97,7 @@ class Client:
         self.password = password
         self.timeout = float(timeout)
         self.req = self._check_session()
+        self.count_events = 1
 
     def _check_session(self):
         """Check the connection with device
@@ -112,6 +114,21 @@ class Client:
     def __getattr__(self, key):
         return DynamicMethod(self, key)
 
+    def stream_request(self, method, full_url, **data):
+        events = []
+        response = self.req.request(method, full_url, timeout=self.timeout, stream=True, **data)
+        for chunk in response.iter_lines(chunk_size=1024, delimiter=b'--boundary'):
+            if chunk:
+                xml = chunk.split(b'\r\n\r\n')[1].decode("utf-8")
+                events.append(xml)
+                if len(events) == self.count_events:
+                    return events
+
+    def common_request(self, method, full_url, **data):
+        response = self.req.request(method, full_url, timeout=self.timeout, **data)
+        response.raise_for_status()
+        return response
+
     def _prepared_request(self, *args, **kwargs):
         url_path = list(args)
         url_path.insert(0, ISAPI)
@@ -121,8 +138,12 @@ class Client:
         data = kwargs
         data.pop('present', None)
         data.pop('method')
-        response = self.req.request(method, full_url, timeout=self.timeout, **data)
-        response.raise_for_status()
+
+        if "alertStream" in full_url:
+            response = self.stream_request(method, full_url, **data)
+        else:
+            response = self.common_request(method, full_url, **data)
+
         return response
 
     def request(self, *args, **kwargs):
