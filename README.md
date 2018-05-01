@@ -1,31 +1,25 @@
-Python Library for Hikvision Cameras
-=============================
+# Python Library for Hikvision Cameras
+
 
 Simple and easy to use library for working with video equipment from Hikvision.
 
---------------
-
-Install
--------
+## Install
 
 ```bash
 pip install hikvisionapi
 ```
 
-Examples
---------
-
+## Examples
 
 There are two formats for receiving a response:
-
-
-**1. Dict(default):**
 
 
 ```python
 from hikvision import Client
 
 cam = Client('http://192.168.0.2', 'admin', 'admin')
+
+# Dict response (default)
 response = cam.System.deviceInfo(method='get')
 
 response == {u'DeviceInfo': {u'@version': u'2.0',
@@ -34,11 +28,8 @@ response == {u'DeviceInfo': {u'@version': u'2.0',
                      u'bootVersion': u'V1.3.4',
                      '...':'...'
                    }
-```
 
-**2. Text**
-
-```python
+# xml text response
 response = cam.System.deviceInfo(method='get', present='text')
 
 response == '<?xml version="1.0" encoding="UTF-8" ?>
@@ -48,31 +39,23 @@ response == '<?xml version="1.0" encoding="UTF-8" ?>
 ```
 
 Hints:
-""""""
 
 
-1. Channel info
-
-    .. code:: python
-
-        cam.System.Video.inputs.channels[1].motionDetection(method='get')
+```python
+# to get the channel info
+motion_detection_info = cam.System.Video.inputs.channels[1].motionDetection(method='get')
 
 
-2. Send data to device:
+# to send data to device:
+xml = cam.System.deviceInfo(method='get', present='text')
+cam.System.deviceInfo(method='put', data=xml)
 
-    .. code:: python
+# to get events (motion, etc..)
+cam = Client('http://192.168.0.2', 'admin', 'Password')
+cam.count_events = 2 # The number of events we want to retrieve (default = 1)
+response = cam.Event.notification.alertStream(method='get')
 
-        xml = cam.System.deviceInfo(method='get', present='text')
-        cam.System.deviceInfo(method='put', data=xml)
-
-3. Get events(motion, etc..)
-    .. code:: python
-
-        cam = Client('http://192.168.0.2', 'admin', 'Password')
-        cam.count_events = 2 # The number of events we want to retrieve (default = 1)
-        response = cam.Event.notification.alertStream(method='get')
-
-        response == [{u'EventNotificationAlert':
+response == [{u'EventNotificationAlert':
                              {u'@version': u'2.0',
                               u'@xmlns': u'http://www.hikvision.com/ver20/XMLSchema',
                               u'activePostCount': u'0',
@@ -83,16 +66,16 @@ Hints:
                               u'eventType': u'videoloss'
                              }
                    }]
+```
 
-How to run the tests
---------
+## How to run the tests
 
 ```bash
 pipenv install --dev
 pipenv run pytest
-pipenv run pytest --cov-report html --cov hikvisionapi # to get coverage report in ./htmlcov/ 
+pipenv run pytest --cov-report html --cov hikvisionapi # to get coverage report in ./htmlcov/
 
-# or you can get into the virtual env with: 
+# or you can get into the virtual env with:
 pipenv shell
 pytest
 ```
