@@ -1,0 +1,58 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: [Basic YWRtaW46Y2FpbnRodXMxMjM=]
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://192.168.1.116/ISAPI/System/status
+  response:
+    body: {string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DeviceStatus version=\"\
+        2.0\" xmlns=\"http://www.hikvision.com/ver20/XMLSchema\">\r\n<currentDeviceTime>1970-04-14T12:14:55+08:00</currentDeviceTime>\r\
+        \n<deviceUpTime>857877</deviceUpTime>\r\n<CPUList>\r\n<CPU>\r\n<cpuDescription>ARM926EJ-Sid(wb)\
+        \ [41069265] revision 5 (ARMv5TEJ)</cpuDescription>\r\n<cpuUtilization>30</cpuUtilization>\r\
+        \n</CPU>\r\n</CPUList>\r\n<MemoryList>\r\n<Memory>\r\n<memoryDescription>DDR\
+        \ Memory</memoryDescription>\r\n<memoryUsage>67</memoryUsage>\r\n<memoryAvailable>48896</memoryAvailable>\r\
+        \n</Memory>\r\n</MemoryList>\r\n</DeviceStatus>\r\n"}
+    headers:
+      Connection: [close]
+      Content-Length: ['572']
+      Content-Type: [application/xml]
+      Date: ['Tue, 14 Apr 1970 12:14:55 GMT']
+      Server: [App-webs/]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: [Basic YWRtaW46Y2FpbnRodXMxMjM=]
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://192.168.1.116/ISAPI/System/deviceinfo
+  response:
+    body: {string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DeviceInfo version=\"\
+        2.0\" xmlns=\"http://www.hikvision.com/ver20/XMLSchema\">\r\n<deviceName>IP\
+        \ CAMERA</deviceName>\r\n<deviceID>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</deviceID>\r\
+        \n<deviceDescription>IPCamera</deviceDescription>\r\n<deviceLocation>hangzhou</deviceLocation>\r\
+        \n<systemContact>Hikvision.China</systemContact>\r\n<model>DS-2CD2155FWD-I</model>\r\
+        \n<serialNumber>DS-2CD2155FWD-XXXXXXXXXXXXXXXXXXXXX</serialNumber>\r\n<macAddress>XX:XX:XX:XX:XX:XX</macAddress>\r\
+        \n<firmwareVersion>V5.4.5</firmwareVersion>\r\n<firmwareReleasedDate>build\
+        \ 170124</firmwareReleasedDate>\r\n<encoderVersion>V7.3</encoderVersion>\r\
+        \n<encoderReleasedDate>build 170123</encoderReleasedDate>\r\n<bootVersion>V1.3.4</bootVersion>\r\
+        \n<bootReleasedDate>100316</bootReleasedDate>\r\n<hardwareVersion>0x0</hardwareVersion>\r\
+        \n<deviceType>IPCamera</deviceType>\r\n<telecontrolID>88</telecontrolID>\r\
+        \n<supportBeep>false</supportBeep>\r\n<supportVideoLoss>false</supportVideoLoss>\r\
+        \n</DeviceInfo>\r\n"}
+    headers:
+      Connection: [close]
+      Content-Length: ['976']
+      Content-Type: [application/xml]
+      Date: ['Tue, 14 Apr 1970 12:14:55 GMT']
+      Server: [App-webs/]
+    status: {code: 200, message: OK}
+version: 1

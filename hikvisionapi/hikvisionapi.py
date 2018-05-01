@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import requests
-from requests.auth import HTTPBasicAuth
+from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 import xmltodict
 
 try:
@@ -108,7 +108,9 @@ class Client:
         session = requests.session()
         session.auth = HTTPBasicAuth(self.login, self.password)
         response = session.get(full_url)
-        response.raise_for_status()
+        if response.status_code == 401:
+            session.auth = HTTPDigestAuth(self.login, self.password)
+            response = session.get(full_url)
         return session
 
     def __getattr__(self, key):
