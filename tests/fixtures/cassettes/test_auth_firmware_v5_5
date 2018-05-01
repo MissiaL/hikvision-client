@@ -1,0 +1,122 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: [Basic YWRtaW46Y2FpbnRodXMxMjM=]
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://192.168.1.161/ISAPI/System/status
+  response:
+    body: {string: "<!DOCTYPE html>\r\n<html><head><title>Document Error: Unauthorized</title></head>\r\
+        \n<body><h2>Access Error: 401 -- Unauthorized</h2>\r\n<p>Authentication Error</p>\r\
+        \n</body>\r\n</html>\r\n"}
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [text/html]
+      Date: ['Sun, 22 Feb 1970 08:21:26 GMT']
+      Keep-Alive: ['timeout=10, max=99']
+      Server: [App-webs/]
+      WWW-Authenticate: ['Digest qop="auth", realm="IP Camera(83813)", nonce="4d5755784d7a41344d546b365a446b31597a51354e513d3d",
+          stale="FALSE"']
+    status: {code: 401, message: Unauthorized}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://192.168.1.161/ISAPI/System/status
+  response:
+    body: {string: "<!DOCTYPE html>\r\n<html><head><title>Document Error: Unauthorized</title></head>\r\
+        \n<body><h2>Access Error: 401 -- Unauthorized</h2>\r\n<p>Authentication Error</p>\r\
+        \n</body>\r\n</html>\r\n"}
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [text/html]
+      Date: ['Sun, 22 Feb 1970 08:21:26 GMT']
+      Keep-Alive: ['timeout=10, max=98']
+      Server: [App-webs/]
+      WWW-Authenticate: ['Digest qop="auth", realm="IP Camera(83813)", nonce="5a6d466d4d5467314d3251365a446b31597a51355a413d3d",
+          stale="FALSE"']
+    status: {code: 401, message: Unauthorized}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: ['Digest username="admin", realm="IP Camera(83813)", nonce="5a6d466d4d5467314d3251365a446b31597a51355a413d3d",
+          uri="/ISAPI/System/status", response="d5a45576cf89a2dbd133c971c4a672b8",
+          qop="auth", nc=00000001, cnonce="42669a73b46eb115"']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://192.168.1.161/ISAPI/System/status
+  response:
+    body: {string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DeviceStatus version=\"\
+        2.0\" xmlns=\"http://www.hikvision.com/ver20/XMLSchema\">\r\n<currentDeviceTime>1970-02-22T08:21:26+08:00</currentDeviceTime>\r\
+        \n<deviceUpTime>2900578</deviceUpTime>\r\n<CPUList>\r\n<CPU>\r\n<cpuDescription>ARM926EJ-Sid(wb)\
+        \ [41069265] revision 5 (ARMv5TEJ)</cpuDescription>\r\n<cpuUtilization>100</cpuUtilization>\r\
+        \n</CPU>\r\n</CPUList>\r\n<MemoryList>\r\n<Memory>\r\n<memoryDescription>DDR\
+        \ Memory</memoryDescription>\r\n<memoryUsage>73</memoryUsage>\r\n<memoryAvailable>40596</memoryAvailable>\r\
+        \n</Memory>\r\n</MemoryList>\r\n<CameraList>\r\n<Camera>\r\n<zoomReverseTimes>0</zoomReverseTimes>\r\
+        \n<zoomTotalSteps>0</zoomTotalSteps>\r\n<focusReverseTimes>0</focusReverseTimes>\r\
+        \n<focusTotalSteps>0</focusTotalSteps>\r\n<irisShiftTimes>0</irisShiftTimes>\r\
+        \n<irisTotalSteps>0</irisTotalSteps>\r\n<icrShiftTimes>0</icrShiftTimes>\r\
+        \n<icrTotalSteps>0</icrTotalSteps>\r\n<lensIntirTimes>0</lensIntirTimes>\r\
+        \n<cameraRunTotalTime>0</cameraRunTotalTime>\r\n</Camera>\r\n</CameraList>\r\
+        \n<DomeInfoList>\r\n<DomeInfo>\r\n<domeRunTotalTime>0</domeRunTotalTime>\r\
+        \n<runTimeUnderNegativetwenty>0</runTimeUnderNegativetwenty>\r\n<runTimeBetweenNtwentyPforty>0</runTimeBetweenNtwentyPforty>\r\
+        \n<runtimeOverPositiveforty>0</runtimeOverPositiveforty>\r\n<panTotalRounds>0</panTotalRounds>\r\
+        \n<tiltTotalRounds>0</tiltTotalRounds>\r\n<heatState>0</heatState>\r\n<fanState>0</fanState>\r\
+        \n</DomeInfo>\r\n</DomeInfoList>\r\n<totalRebootCount>0</totalRebootCount>\r\
+        \n</DeviceStatus>\r\n"}
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['1440']
+      Content-Type: [application/xml]
+      Date: ['Sun, 22 Feb 1970 08:21:26 GMT']
+      Keep-Alive: ['timeout=10, max=97']
+      Server: [App-webs/]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Authorization: ['Digest username="admin", realm="IP Camera(83813)", nonce="5a6d466d4d5467314d3251365a446b31597a51355a413d3d",
+          uri="/ISAPI/System/deviceinfo", response="24e29ddc547333b082372faad62b9bd0",
+          qop="auth", nc=00000002, cnonce="6d48fcae475d61d7"']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://192.168.1.161/ISAPI/System/deviceinfo
+  response:
+    body: {string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<DeviceInfo version=\"\
+        2.0\" xmlns=\"http://www.hikvision.com/ver20/XMLSchema\">\r\n<deviceName>IP\
+        \ CAMERA</deviceName>\r\n<deviceID>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</deviceID>\r\
+        \n<deviceDescription>IPCamera</deviceDescription>\r\n<deviceLocation>hangzhou</deviceLocation>\r\
+        \n<systemContact>Hikvision.China</systemContact>\r\n<model>DS-2CD2155FWD-I</model>\r\
+        \n<serialNumber>DS-2CD2155FWD-XXXXXXXXXXXXXXXXXXXXX</serialNumber>\r\n<macAddress>XX:XX:XX:XX:XX:XX</macAddress>\r\
+        \n<firmwareVersion>V5.5.0</firmwareVersion>\r\n<firmwareReleasedDate>build\
+        \ 170725</firmwareReleasedDate>\r\n<encoderVersion>V7.3</encoderVersion>\r\
+        \n<encoderReleasedDate>build 170627</encoderReleasedDate>\r\n<bootVersion>V1.3.4</bootVersion>\r\
+        \n<bootReleasedDate>100316</bootReleasedDate>\r\n<hardwareVersion>0x0</hardwareVersion>\r\
+        \n<deviceType>IPCamera</deviceType>\r\n<telecontrolID>88</telecontrolID>\r\
+        \n<supportBeep>false</supportBeep>\r\n<supportVideoLoss>false</supportVideoLoss>\r\
+        \n<firmwareVersionInfo>B-R-G1-0</firmwareVersionInfo>\r\n</DeviceInfo>\r\n"}
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['1029']
+      Content-Type: [application/xml]
+      Date: ['Sun, 22 Feb 1970 08:21:26 GMT']
+      Keep-Alive: ['timeout=10, max=96']
+      Server: [App-webs/]
+    status: {code: 200, message: OK}
+version: 1
