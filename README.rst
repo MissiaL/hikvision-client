@@ -1,18 +1,16 @@
-LIbrary for Hikvision Cameras
+Python Library for Hikvision Cameras
 =============================
 
-Simple and easy to use library for working with video equipment
-companies Hikvision
+Simple and easy to use library for working with video equipment from Hikvision.
 
 --------------
 
 Install
 -------
 
-.. code:: bash
-
-    pip install hikvisionapi
-
+```bash
+pip install hikvisionapi
+```
 
 Examples
 --------
@@ -24,35 +22,30 @@ There are two formats for receiving a response:
 **1. Dict(default):**
 
 
-    .. code:: python
+```python
+from hikvision import Client
 
-        from hikvision import Client
+cam = Client('http://192.168.0.2', 'admin', 'admin')
+response = cam.System.deviceInfo(method='get')
 
-        api = Client('http://192.168.0.2', 'admin', 'admin')
-        response = api.System.deviceInfo(method='get')
-
-        response = {u'DeviceInfo': {u'@version': u'2.0',
+response == {u'DeviceInfo': {u'@version': u'2.0',
                      u'@xmlns': u'http://www.hikvision.com/ver20/XMLSchema',
                      u'bootReleasedDate': u'100316',
                      u'bootVersion': u'V1.3.4',
                      '...':'...'
                    }
-
+```
 
 **2. Text**
 
+```python
+response = cam.System.deviceInfo(method='get', present='text')
 
-    .. code:: python
-
-        response = api.System.deviceInfo(method='get', present='text')
-
-    .. code:: text
-
-        response = '<?xml version="1.0" encoding="UTF-8" ?>
+response == '<?xml version="1.0" encoding="UTF-8" ?>
         <DeviceInfo version="1.0" xmlns="http://www.hikvision.com/ver20/XMLSchema">
         <deviceName>HIKVISION</deviceName>
         </DeviceInfo>'
-
+```
 
 Hints:
 """"""
@@ -62,24 +55,24 @@ Hints:
 
     .. code:: python
 
-        api.System.Video.inputs.channels[1].motionDetection(method='get')
+        cam.System.Video.inputs.channels[1].motionDetection(method='get')
 
 
 2. Send data to device:
 
     .. code:: python
 
-        xml = api.System.deviceInfo(method='get', present='text')
-        api.System.deviceInfo(method='put', data=xml)
+        xml = cam.System.deviceInfo(method='get', present='text')
+        cam.System.deviceInfo(method='put', data=xml)
 
 3. Get events(motion, etc..)
     .. code:: python
 
-        client = Client('http://192.168.0.2', 'admin', 'Password')
-        client.count_events = 2 # The number of events that need to(default = 1)
-        response = client.Event.notification.alertStream(method='get')
+        cam = Client('http://192.168.0.2', 'admin', 'Password')
+        cam.count_events = 2 # The number of events we want to retrieve (default = 1)
+        response = cam.Event.notification.alertStream(method='get')
 
-        response = [{u'EventNotificationAlert':
+        response == [{u'EventNotificationAlert':
                              {u'@version': u'2.0',
                               u'@xmlns': u'http://www.hikvision.com/ver20/XMLSchema',
                               u'activePostCount': u'0',
@@ -91,4 +84,16 @@ Hints:
                              }
                    }]
 
+How to run the tests
+--------
+
+```bash
+pipenv install --dev
+pipenv run pytest
+pipenv run pytest --cov-report html --cov hikvisionapi # to get coverage report in ./htmlcov/ 
+
+# or you can get into the virtual env with: 
+pipenv shell
+pytest
+```
 
