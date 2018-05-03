@@ -1,3 +1,7 @@
+
+[![CircleCI](https://circleci.com/gh/MissiaL/hikvision-client.svg?style=svg)](https://circleci.com/gh/MissiaL/hikvision-client)
+
+
 # Python Library for Hikvision Cameras
 
 
