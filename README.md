@@ -55,7 +55,8 @@ xml = cam.System.deviceInfo(method='get', present='text')
 cam.System.deviceInfo(method='put', data=xml)
 
 # to get events (motion, etc..)
-cam = Client('http://192.168.0.2', 'admin', 'Password')
+# Increase timeout if you want to wait for the event to be received
+cam = Client('http://192.168.0.2', 'admin', 'Password', timeout=30)
 cam.count_events = 2 # The number of events we want to retrieve (default = 1)
 response = cam.Event.notification.alertStream(method='get')
 
@@ -70,6 +71,16 @@ response == [{u'EventNotificationAlert':
                               u'eventType': u'videoloss'
                              }
                    }]
+
+# Alternative solution to get events
+cam = Client('http://192.168.0.2', 'admin', 'Password', timeout=1)
+while True:
+    try:
+        response = cam.Event.notification.alertStream(method='get')
+        if response:
+            print response
+    except:
+        pass
 ```
 
 ## How to run the tests
