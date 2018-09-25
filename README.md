@@ -46,7 +46,6 @@ response == '''<?xml version="1.0" encoding="UTF-8" ?>
 
 Hints:
 
-
 ```python
 # to get the channel info
 motion_detection_info = cam.System.Video.inputs.channels[1].motionDetection(method='get')
@@ -58,7 +57,8 @@ cam.System.deviceInfo(method='put', data=xml)
 
 
 # to get events (motion, etc..)
-cam = Client('http://192.168.0.2', 'admin', 'Password')
+# Increase timeout if you want to wait for the event to be received
+cam = Client('http://192.168.0.2', 'admin', 'Password', timeout=30)
 cam.count_events = 2 # The number of events we want to retrieve (default = 1)
 response = cam.Event.notification.alertStream(method='get', type='stream')
 
@@ -74,7 +74,16 @@ response == [{
         u'eventType': u'videoloss'
         }
    }]
-   
+
+# Alternative solution to get events
+cam = Client('http://192.168.0.2', 'admin', 'Password', timeout=1)
+while True:
+    try:
+        response = cam.Event.notification.alertStream(method='get', type='stream')
+        if response:
+            print response
+    except Exception:
+        pass
 
 # to get opaque data type and write to file
 response = cam.System.configurationData(method='get', type='opaque_data')
