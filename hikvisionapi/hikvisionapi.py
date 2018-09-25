@@ -126,6 +126,9 @@ class Client:
                 if len(events) == self.count_events:
                     return events
 
+    def opaque_request(self, method, full_url, **data):
+        return self.req.request(method, full_url, timeout=self.timeout, stream=True, **data)
+
     def common_request(self, method, full_url, **data):
         response = self.req.request(method, full_url, timeout=self.timeout, **data)
         response.raise_for_status()
@@ -140,15 +143,21 @@ class Client:
         data = kwargs
         data.pop('present', None)
         data.pop('method')
+        supported_types = {
+            'stream': self.stream_request,
+            'opaque_data': self.opaque_request
+        }
+        return_type = data.pop('type', '').lower()
 
-        if "alertStream" in full_url:
-            response = self.stream_request(method, full_url, **data)
+        if return_type in supported_types and method == 'get':
+            return supported_types[return_type](method, full_url, **data)
         else:
-            response = self.common_request(method, full_url, **data)
-
-        return response
+            return self.common_request(method, full_url, **data)
 
     def request(self, *args, **kwargs):
         response = self._prepared_request(*args, **kwargs)
         present = kwargs.get('present', 'dict')
+        return_type = kwargs.get('type', '').lower()
+        if return_type == 'opaque_data':
+            return response
         return response_parser(response, present)
