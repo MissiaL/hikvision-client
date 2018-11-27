@@ -90,7 +90,14 @@ response = cam.System.configurationData(method='get', type='opaque_data')
 with open('my_file', 'wb') as f:
     for chunk in response.iter_content(chunk_size=1024): 
         if chunk:
-            f.write(chunk)  
+            f.write(chunk)
+            
+# Get and save picture from camera            
+response = client.Streaming.channels[102].picture(method='get', type='opaque_data')
+with open('screen.jpg', 'wb') as f:
+    for chunk in response.iter_content(chunk_size=1024):
+        if chunk:
+            f.write(chunk)                
 ```
 
 ## How to run the tests
