@@ -10,8 +10,6 @@ except ImportError:
     from urlparse import urljoin
 import json
 
-#ISAPI = 'ISAPI' became a property of Client for flexibility
-
 
 class ConvertToJsonError(Exception):
     pass
@@ -55,7 +53,8 @@ def response_parser(response, present='dict'):
 
 
 class Client:
-    """Client for Hikvision API
+    """
+    Client for Hikvision API
 
     Class uses the dynamic methods to work with api
 
@@ -63,9 +62,7 @@ class Client:
 
     from hikvisionapi import Client
     api = Client('http://192.168.0.2', 'admin', 'admin')
-    response = api.System.deviceInfo(method='get', present='json')
-
-    Response as json
+    response = api.System.deviceInfo(method='get')
 
     response = {
         "DeviceInfo": {
@@ -113,6 +110,7 @@ class Client:
         if response.status_code == 401:
             session.auth = HTTPDigestAuth(self.login, self.password)
             response = session.get(full_url)
+        response.raise_for_status()
         return session
 
     def __getattr__(self, key):
@@ -138,7 +136,7 @@ class Client:
 
     def _prepared_request(self, *args, **kwargs):
         url_path = list(args)
-        url_path.insert(0, isapi_prefix)
+        url_path.insert(0, self.isapi_prefix)
         full_url = urljoin(self.host, "/".join(url_path))
         method = kwargs['method']
 
