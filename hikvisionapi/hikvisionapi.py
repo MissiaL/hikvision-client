@@ -10,7 +10,7 @@ except ImportError:
     from urlparse import urljoin
 import json
 
-ISAPI = 'ISAPI'
+#ISAPI = 'ISAPI' became a property of Client for flexibility
 
 
 class ConvertToJsonError(Exception):
@@ -85,17 +85,19 @@ class Client:
     </DeviceInfo>
     """
 
-    def __init__(self, host, login=None, password=None, timeout=3):
+    def __init__(self, host, login=None, password=None, timeout=3, isapi_prefix='ISAPI'):
         """
         :param host: Host for device ('http://192.168.0.2')
         :param login: (optional) Login for device
         :param password: (optional) Password for device
+        :param isapi_prefix: (optional) defaults to ISAPI but can be customized
         :param timeout: (optional) Timeout for request
         """
         self.host = host
         self.login = login
         self.password = password
         self.timeout = float(timeout)
+        self.isapi_prefix = isapi_prefix
         self.req = self._check_session()
         self.count_events = 1
 
@@ -104,7 +106,7 @@ class Client:
 
          :return request.session() object
         """
-        full_url = urljoin(self.host, ISAPI + '/System/status')
+        full_url = urljoin(self.host, self.isapi_prefix + '/System/status')
         session = requests.session()
         session.auth = HTTPBasicAuth(self.login, self.password)
         response = session.get(full_url)
@@ -136,7 +138,7 @@ class Client:
 
     def _prepared_request(self, *args, **kwargs):
         url_path = list(args)
-        url_path.insert(0, ISAPI)
+        url_path.insert(0, isapi_prefix)
         full_url = urljoin(self.host, "/".join(url_path))
         method = kwargs['method']
 
