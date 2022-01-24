@@ -1,14 +1,14 @@
 # coding=utf-8
 
+import inspect
+import json
+from typing import Any, AsyncGenerator, AsyncIterator, Coroutine, List, Optional, Union
+from urllib.parse import urljoin
+
+import httpx
 import requests
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 import xmltodict
-
-try:
-    from urllib.parse import urljoin
-except ImportError:
-    from urlparse import urljoin
-import json
 
 
 class ConvertToJsonError(Exception):
@@ -16,20 +16,29 @@ class ConvertToJsonError(Exception):
 
 
 class DynamicMethod(object):
-    def __init__(self, client, method_name):
+    def __init__(self, client, path):
         self.client = client
-        self.method_name = method_name
-        self.path = []
+        self.path = path
+
+    def __repr__(self):
+        return f"<DynamicMethod client={self.client} path={self.path}"
 
     def __getattr__(self, key):
-        return DynamicMethod(self.client, '/'.join((self.method_name, key)))
+        return DynamicMethod(self.client, '/'.join((self.path, key)))
 
     def __getitem__(self, item):
-        return DynamicMethod(self.client, self.method_name + "/" + str(item))
+        return DynamicMethod(self.client, self.path + "/" + str(item))
 
     def __call__(self, **kwargs):
         assert 'method' in kwargs, "set http method in args"
-        return self.client.request(self.method_name, **kwargs)
+        return self.client.request(self.path, **kwargs)
+
+async def async_response_parser(response, present='dict'):
+    if inspect.iscoroutine(response):
+        data = await response
+    else:
+        data = response
+    return response_parser(data, present=present)
 
 
 def response_parser(response, present='dict'):
@@ -37,10 +46,12 @@ def response_parser(response, present='dict'):
     """
     if isinstance(response, (list,)):
         result = "".join(response)
+    elif isinstance(response, str):
+        result = response
     else:
         result = response.text
 
-    if present == 'dict':
+    if present is None or present == 'dict':
         if isinstance(response, (list,)):
             events = []
             for event in response:
@@ -161,3 +172,170 @@ class Client:
         if return_type == 'opaque_data':
             return response
         return response_parser(response, present)
+
+
+class AsyncClient:
+    """
+    Async Client for Hikvision API
+
+    Class uses the dynamic methods to work with api
+
+    Basic Usage::
+
+    from hikvisionapi import AsyncClient
+    api = AsyncClient('http://192.168.0.2', 'admin', 'admin')
+    response = await api.System.deviceInfo(method='get')
+
+    response = {
+        "DeviceInfo": {
+            "@version": "1.0",
+            "@xmlns": "http://www.hikvision.com/ver20/XMLSchema",
+            "deviceName": "HIKVISION"
+        }
+    }
+
+    or as text
+
+    response = api.System.deviceInfo(method='get', present='text)
+
+    <?xml version="1.0" encoding="UTF-8" ?>
+        <DeviceInfo version="1.0" xmlns="http://www.hikvision.com/ver20/XMLSchema">
+        <deviceName>HIKVISION</deviceName>
+    </DeviceInfo>
+    """
+
+    def __init__(
+        self,
+        host: str,
+        login: str,
+        password: str,
+        timeout: Optional[float] = 3,
+        isapi_prefix: str = "ISAPI",
+    ):
+        """
+        :param host: Host for device ('http://192.168.0.2')
+        :param login: (optional) Login for device
+        :param password: (optional) Password for device
+        :param isapi_prefix: (optional) defaults to ISAPI but can be customized
+        :param timeout: (optional) Default timeout for requests
+        """
+        self.host: str = host
+        self.login: str = login
+        self.password: str = password
+        self.timeout: Optional[float] = timeout
+        self.isapi_prefix: str = isapi_prefix
+        self._auth_method: Optional[httpx._auth.Auth] = None
+
+    def __getattr__(self, key: str):
+        return DynamicMethod(self, key)
+
+
+    async def _detect_auth_method(self):
+        """Establish the connection with device"""
+        full_url = urljoin(self.host, self.isapi_prefix + '/System/status')
+        for method in [
+            httpx.BasicAuth(self.login, self.password),
+            httpx.DigestAuth(self.login, self.password),
+        ]:
+                async with httpx.AsyncClient(auth=method) as client:
+                    response = await client.get(full_url)
+                    if response.status_code == 200:
+                        self._auth_method = method
+
+        if not self._auth_method:
+            response.raise_for_status()
+
+    async def stream_request(
+        self,
+        method: str,
+        full_url: str,
+        present: str,
+        timeout: Optional[float],
+        **data,
+    ) -> AsyncGenerator[Union[List[str], str], None]:
+        if not self._auth_method:
+            await self._detect_auth_method()
+
+        # This is a naive parser that assumes all stream endpoints will generate XML since
+        # there aren't any convenient multipart readers
+        async with httpx.AsyncClient(auth=self._auth_method) as client:
+            async with client.stream(
+                method, full_url, timeout=timeout, **data
+            ) as response:
+                buffer = ""
+                opening_tag = None
+
+                async for chunk in response.aiter_text():
+                    buffer += chunk
+                    events = buffer.split("\r\n\r\n")[1:]
+
+                    if not opening_tag and len(events) > 0 and ">" in events[0]:
+                        opening_tag = events[0].split(">", 1)[0].split("<", 1)[1].split(" ")[0]
+
+                    if opening_tag and f"</{opening_tag}>" in events[0]:
+                        yield await async_response_parser(events[0].split(f"</{opening_tag}>", 1)[0] + f"</{opening_tag}>", present=present)
+                        opening_tag = None
+                        buffer = "".join(events[1:])
+
+    async def opaque_request(
+        self,
+        method: str,
+        full_url: str,
+        present: str,
+        timeout: Optional[float],
+        **data,
+    ) -> AsyncIterator[bytes]:
+        if not self._auth_method:
+            await self._detect_auth_method()
+
+        async with httpx.AsyncClient(auth=self._auth_method) as client:
+            async with client.stream(
+                method, full_url, timeout=timeout, **data
+            ) as response:
+                async for chunk in response.aiter_bytes():
+                    yield chunk
+
+    async def common_request(
+        self,
+        method: str,
+        full_url: str,
+        present: str,
+        timeout: Optional[float],
+        **data,
+    ) -> Union[List[str], str]:
+        if not self._auth_method:
+            await self._detect_auth_method()
+
+        async with httpx.AsyncClient(auth=self._auth_method) as client:
+            response = await client.request(method, full_url, timeout=timeout, **data)
+            response.raise_for_status()
+            return await async_response_parser(response, present)
+
+    def request(
+        self, *args, **kwargs
+    ) -> Union[
+        Coroutine[Any, Any, Union[List[str], str]],
+        AsyncIterator[bytes],
+        AsyncGenerator[Union[List[str], str], None],
+    ]:
+        url_path = list(args)
+        url_path.insert(0, self.isapi_prefix)
+        full_url = urljoin(self.host, "/".join(url_path))
+
+        method = kwargs["method"]
+        kwargs.pop("method")
+        present = kwargs.pop("present", None)
+        supported_types = {
+            'stream': self.stream_request,
+            'opaque_data': self.opaque_request
+        }
+        return_type = kwargs.pop("type", "").lower()
+        timeout = kwargs.get("timeout", self.timeout)
+        kwargs.pop("timeout", None)
+
+        if return_type in supported_types and method == "get":
+            return supported_types[return_type](
+                method, full_url, present, timeout, **kwargs
+            )
+        else:
+            return self.common_request(method, full_url, present, timeout, **kwargs)

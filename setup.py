@@ -16,5 +16,6 @@ setup(name='hikvisionapi',
       long_description=open(join(dirname(__file__), 'README.md')).read(),
       download_url='https://github.com/MissiaL/hikvision-client/tarball/{}'.format(version),
       keywords=['api', 'hikvision', 'hikvision-client'],
-      install_requires=['xmltodict', 'requests']
+      install_requires=['xmltodict', 'requests', 'httpx'],
+      python_requires='>3.5',
       )

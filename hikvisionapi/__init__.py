@@ -1,3 +1,4 @@
+from .hikvisionapi import AsyncClient
 from .hikvisionapi import Client
 
 __title__ = 'hikvisionapi'

@@ -100,6 +100,62 @@ with open('screen.jpg', 'wb') as f:
             f.write(chunk)                
 ```
 
+## Examples (Async)
+
+
+```python
+from hikvisionapi import AsyncClient
+
+cam = AsyncClient('http://192.168.0.2', 'admin', 'admin')
+
+
+# Dict response (default)
+response = await cam.System.deviceInfo(method='get')
+
+response == {
+    u'DeviceInfo': {
+        u'@version': u'2.0',
+        '...':'...'
+        }
+    }
+
+
+# xml text response
+response = await cam.System.deviceInfo(method='get', present='text')
+
+response == '''<?xml version="1.0" encoding="UTF-8" ?>
+        <DeviceInfo version="1.0" xmlns="http://www.hikvision.com/ver20/XMLSchema">
+        <deviceName>HIKVISION</deviceName>
+        </DeviceInfo>'''
+
+# to send data to device:
+xml = cam.System.deviceInfo(method='get', present='text')
+await cam.System.deviceInfo(method='put', data=xml)
+
+
+# to get events (motion, etc..)
+# Increase timeout if you want to wait for the event to be received (None for infinite)
+async for event in cam.Event.notification.alertStream(method='get', type='stream', timeout=None):
+    event == {
+        u'EventNotificationAlert':{
+            u'@version': u'2.0',
+            u'@xmlns': u'http://www.hikvision.com/ver20/XMLSchema',
+            u'activePostCount': u'0',
+            u'channelID': u'1',
+            u'dateTime': u'2018-03-21T15:49:02+08:00',
+            u'eventDescription': u'videoloss alarm',
+            u'eventState': u'inactive',
+            u'eventType': u'videoloss'
+            }
+    }
+
+# Get and save picture from camera
+with open('screen.jpg', 'wb') as f:
+    async for chunk in cam.Streaming.channels[102].picture(method='get', type='opaque_data'):
+        if chunk:
+            f.write(chunk)
+```
+
 ## How to run the tests
 
 
