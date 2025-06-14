@@ -7,6 +7,8 @@
 
 Simple and easy to use library for working with video equipment from Hikvision.
 
+Supports **Python 3.8** through **3.13**.
+
 ## Install
 
 ```bash
