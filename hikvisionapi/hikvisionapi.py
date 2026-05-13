@@ -118,6 +118,7 @@ class Client:
         """
         full_url = urljoin(self.host, self.isapi_prefix + "/System/status")
         session = requests.session()
+        session.verify = False  # Disable SSL verification
         session.auth = HTTPBasicAuth(self.login, self.password)
         response = session.get(full_url)
         if response.status_code == 401:
