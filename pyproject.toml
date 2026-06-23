@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hikvisionapi"
+version = "0.3.2"
+description = "The client for HIKVISION cameras, DVR"
+authors = [{ name = "Petr Alekseev", email = "petrmissial@gmail.com" }]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+dependencies = [
+    "xmltodict",
+    "requests",
+    "httpx",
+]
+keywords = ["api", "hikvision", "hikvision-client"]
+
+[project.urls]
+Homepage = "https://github.com/MissiaL/hikvision-client"
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+
+[tool.pytest.ini_options]
+addopts = "-q"

@@ -1,20 +1,27 @@
-from setuptools import setup, find_packages
-from os.path import join, dirname
 import re
+from os.path import dirname, join
 
-with open('hikvisionapi/__init__.py', 'r') as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                        fd.read(), re.MULTILINE).group(1)
+from setuptools import find_packages, setup
 
-setup(name='hikvisionapi',
-      version=version,
-      description='The client for HIKVISION cameras, DVR',
-      url='https://github.com/MissiaL/hikvision-client',
-      author='Petr Alekseev',
-      author_email='petrmissial@gmail.com',
-      packages=find_packages(),
-      long_description=open(join(dirname(__file__), 'README.md')).read(),
-      download_url='https://github.com/MissiaL/hikvision-client/tarball/{}'.format(version),
-      keywords=['api', 'hikvision', 'hikvision-client'],
-      install_requires=['xmltodict', 'requests']
-      )
+with open("hikvisionapi/__init__.py", "r") as fd:
+    version = re.search(
+        r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
+    ).group(1)
+
+setup(
+    name="hikvisionapi",
+    version=version,
+    description="The client for HIKVISION cameras, DVR",
+    url="https://github.com/MissiaL/hikvision-client",
+    author="Petr Alekseev",
+    author_email="petrmissial@gmail.com",
+    packages=find_packages(),
+    long_description_content_type="text/markdown",
+    long_description=open(join(dirname(__file__), "README.md")).read(),
+    download_url="https://github.com/MissiaL/hikvision-client/tarball/{}".format(
+        version
+    ),
+    keywords=["api", "hikvision", "hikvision-client"],
+    install_requires=["xmltodict", "requests", "httpx"],
+    python_requires=">=3.8",
+)
